@@ -10,6 +10,7 @@ djangorestframework = "^3.11.0"
 notebook = "^6.0.3"
 django-extensions = "^2.2.8"
 pygments = "^2.5.2"
+django = "<3"
 
 [tool.poetry.dev-dependencies]
 
