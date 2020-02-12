@@ -4,15 +4,18 @@ from django.db import models
 from pygments.lexers import get_all_lexers
 from pygments.styles import get_all_styles
 
+from config.settings import AUTH_USER_MODEL
+
 LEXERS = [item for item in get_all_lexers() if item[1]]
 LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
 STYLE_CHOICES = sorted([(item, item) for item in get_all_styles()])
 
 
 class Snippet(models.Model):
+    # author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+
     # db index 설정방법 1(Field.db_index)
     # created = models.DateTimeField(auto_now_add=True, db_index=True)
-
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100, blank=True, default='')
     code = models.TextField()
