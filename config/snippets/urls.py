@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from . import apis
-from .apis import mixins
+from .apis import mixins, generics
 
 app_name = 'snippets'
 
@@ -16,5 +16,8 @@ urlpatterns = [
     # path('snippets/<int:pk>/', apis.SnippetRetrieveUpdateDestroyAPIView.as_view()),
 
     path('snippets/', mixins.SnippetListCreateAPIView.as_view()),
-    path('snippets/<int:pk>/', mixins.SnippetRetrieveUpdateDestroyAPIView.as_view())
+    path('snippets/<int:pk>/', mixins.SnippetRetrieveUpdateDestroyAPIView.as_view()),
+
+    # path('snippets/', generics.SnippetListCreateAPIView.as_view()),
+    # path('snippets/<int:pk>/', generics.SnippetRetrieveUpdateDestroyAPIView.as_view())
 ]
