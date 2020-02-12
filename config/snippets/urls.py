@@ -1,9 +1,16 @@
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
 from . import views
 from . import apis
 from .apis import mixins, generics, viewsets
 
 app_name = 'snippets'
+
+# 중복을 가장 최소화한 viewset에는 router 기능이 있음
+# router.urls는 urlpatterns_viewset의 모든 내용이 들어있음
+router = DefaultRouter()
+router.register(r'snippets', viewsets.SnippetViewSet)
 
 urlpatterns_api_view = [
     # path('snippets/', views.snippet_list),
@@ -34,5 +41,6 @@ urlpatterns_viewset = [
 
 urlpatterns = [
     path('api-view/', include(urlpatterns_api_view)),
-    path('viewsets/', include(urlpatterns_viewset))
+    path('viewsets/', include(urlpatterns_viewset)),
+    path('router/', include(router.urls))
 ]
