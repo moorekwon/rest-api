@@ -1,11 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from . import apis
-from .apis import mixins, generics
+from .apis import mixins, generics, viewsets
 
 app_name = 'snippets'
 
-urlpatterns = [
+urlpatterns_api_view = [
     # path('snippets/', views.snippet_list),
     # path('snippets/<int:pk>/', views.snippet_detail),
 
@@ -15,9 +15,24 @@ urlpatterns = [
     # path('snippets/', apis.SnippetListCreateAPIView.as_view()),
     # path('snippets/<int:pk>/', apis.SnippetRetrieveUpdateDestroyAPIView.as_view()),
 
-    path('snippets/', mixins.SnippetListCreateAPIView.as_view()),
-    path('snippets/<int:pk>/', mixins.SnippetRetrieveUpdateDestroyAPIView.as_view()),
+    # path('snippets/', mixins.SnippetListCreateAPIView.as_view()),
+    # path('snippets/<int:pk>/', mixins.SnippetRetrieveUpdateDestroyAPIView.as_view()),
 
-    # path('snippets/', generics.SnippetListCreateAPIView.as_view()),
-    # path('snippets/<int:pk>/', generics.SnippetRetrieveUpdateDestroyAPIView.as_view())
+    path('snippets/', generics.SnippetListCreateAPIView.as_view()),
+    path('snippets/<int:pk>/', generics.SnippetRetrieveUpdateDestroyAPIView.as_view())
+]
+
+urlpatterns_viewset = [
+    path('snippets/', viewsets.SnippetViewSet.as_view({
+        'get': 'list',
+        'post': 'create'})),
+    path('snippets/<int:pk>/', viewsets.SnippetViewSet.as_view({
+        'get': 'retrieve',
+        'patch': 'partial_update',
+        'delete': 'destroy'}))
+]
+
+urlpatterns = [
+    path('api-view/', include(urlpatterns_api_view)),
+    path('viewsets/', include(urlpatterns_viewset))
 ]
