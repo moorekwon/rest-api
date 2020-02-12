@@ -1,3 +1,5 @@
+import random
+
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -52,19 +54,30 @@ class SnippetTest(APITestCase):
 
         # 클라이언트로부터 전달될 json 객체를 parse한 python 객체
         data = {
-
+            'code': 'def abc():'
         }
+
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # 응답에 돌아온 객체가 SnippetSerializer로 실제 model instance를 serialize한 결과와 같은지 확인
-        self.assertEqual()
-        # 전체 Snippet 객체 개수가 1개인지 확인(orm)
-        self.assertEqual()
 
-    def tesT_snippet_delete(self):
+        # 응답에 돌아온 객체가 SnippetSerializer로 실제 model instance를 serialize한 결과와 같은지 확인
+        pk = response.data['pk']
+        snippet = Snippet.objects.get(pk=pk)
+        self.assertEqual(SnippetSerializer(snippet).data, response.data)
+        # 전체 Snippet 객체 개수가 1개인지 확인(orm)
+        self.assertEqual(Snippet.objects.count(), 1)
+
+    def test_snippet_delete(self):
         '''
         미리 객체를 5개 만들어놓음
         delete api를 적절히 실행한 후, 객체가 4개가 되었는지 확인
         지운 객체가 실제로 존재하지 않는지 확인
         '''
-        pass
+        snippets = [Snippet.objects.create(code='1') for i in range(5)]
+        snippet = random.choice(snippets)
+        url = f'/api-view/snippets/{snippet.pk}/'
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Snippet.objects.count(), 4)
+        self.assertFalse(Snippet.objects.filter(pk=snippet.pk).exists())
