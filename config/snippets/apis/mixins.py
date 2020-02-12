@@ -9,6 +9,7 @@ from snippets.serializers import SnippetSerializer
 
 
 class SnippetListCreateAPIView(mixins.ListModelMixin,
+                               mixins.CreateModelMixin,
                                generics.GenericAPIView):
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
