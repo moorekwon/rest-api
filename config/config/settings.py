@@ -32,6 +32,8 @@ AUTH_USER_MODEL = 'members.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
+        # token authentication
+        'rest_framework.authentication.TokenAuthentication',
     ]
 }
 
@@ -47,6 +49,8 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'rest_framework',
+    # token authentication
+    'rest_framework.authtoken',
 
     'snippets.apps.SnippetsConfig',
     'members.apps.MembersConfig'
