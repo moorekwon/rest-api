@@ -1,5 +1,6 @@
 import random
 
+from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APITestCase, force_authenticate
 
@@ -25,10 +26,12 @@ class SnippetTest(APITestCase):
         self.assertEqual(len(response.data), 0)
 
         # 5개의 Snippet을 만들고 응답 객체 개수 비교
-        user = User.objects.create(username='test')
+        # user = User.objects.create(username='test')
 
-        for i in range(5):
-            Snippet.objects.create(code='1', author=user)
+        # for i in range(5):
+        #     Snippet.objects.create(code='1', author=user)
+
+        baker.make(Snippet, _quantity=5)
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -42,7 +45,7 @@ class SnippetTest(APITestCase):
             self.assertIn('language', snippet_data)
             self.assertIn('style', snippet_data)
 
-            self.assertEqual('1', snippet_data['code'])
+            # self.assertEqual('1', snippet_data['code'])
 
             # 전달된 Snippet object(dict)의 'pk'에 해당하는 실제 Snippet model instance를
             # SnippetSerializer를 통해 serialize한 값과 snippet_data가 같은지 비교
@@ -61,6 +64,13 @@ class SnippetTest(APITestCase):
             'code': 'def abc():'
         }
 
+        # 인증이 안돼있으면 실패함을 기대
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # 특정 유저로 인증된 상태라면, 생성됨을 기대
+        user = baker.make(User)
+        self.client.force_login(user)
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -77,8 +87,10 @@ class SnippetTest(APITestCase):
         delete api를 적절히 실행한 후, 객체가 4개가 되었는지 확인
         지운 객체가 실제로 존재하지 않는지 확인
         '''
-        user = User.objects.create(username='test')
-        snippets = [Snippet.objects.create(code='1', author=user) for i in range(5)]
+        # user = User.objects.create(username='test')
+        # snippets = [Snippet.objects.create(code='1', author=user) for i in range(5)]
+
+        snippets = baker.make(Snippet, _quantity=5)
         snippet = random.choice(snippets)
         url = f'/api-view/snippets/{snippet.pk}/'
         response = self.client.delete(url)
