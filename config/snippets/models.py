@@ -12,7 +12,7 @@ STYLE_CHOICES = sorted([(item, item) for item in get_all_styles()])
 
 
 class Snippet(models.Model):
-    # author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     # db index 설정방법 1(Field.db_index)
     # created = models.DateTimeField(auto_now_add=True, db_index=True)
