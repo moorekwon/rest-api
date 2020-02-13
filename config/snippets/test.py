@@ -1,8 +1,9 @@
 import random
 
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, force_authenticate
 
+from members.models import User
 from snippets.models import Snippet
 from snippets.serializers import SnippetSerializer
 
@@ -24,14 +25,17 @@ class SnippetTest(APITestCase):
         self.assertEqual(len(response.data), 0)
 
         # 5개의 Snippet을 만들고 응답 객체 개수 비교
+        user = User.objects.create(username='test')
+
         for i in range(5):
-            Snippet.objects.create(code='1')
+            Snippet.objects.create(code='1', author=user)
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 5)
 
         for snippet_data in response.data:
+            self.assertIn('author', snippet_data)
             self.assertIn('title', snippet_data)
             self.assertIn('code', snippet_data)
             self.assertIn('linenos', snippet_data)
@@ -73,7 +77,8 @@ class SnippetTest(APITestCase):
         delete api를 적절히 실행한 후, 객체가 4개가 되었는지 확인
         지운 객체가 실제로 존재하지 않는지 확인
         '''
-        snippets = [Snippet.objects.create(code='1') for i in range(5)]
+        user = User.objects.create(username='test')
+        snippets = [Snippet.objects.create(code='1', author=user) for i in range(5)]
         snippet = random.choice(snippets)
         url = f'/api-view/snippets/{snippet.pk}/'
         response = self.client.delete(url)
