@@ -28,8 +28,6 @@ class AuthTokenAPIView(APIView):
         # 생성된 Token의 key 속성을 적절히 반환
         data = {
             'token': token.key,
-            'user': {
-                'username': UserSerializer(user).data
-            }
+            'user': UserSerializer(user).data
         }
         return Response(data)

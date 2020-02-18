@@ -70,14 +70,14 @@ class SnippetTest(APITestCase):
 
         # 특정 유저로 인증된 상태라면, 생성됨을 기대
         user = baker.make(User)
-        self.client.force_login(user)
+        self.client.force_authenticate(user)
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # 응답에 돌아온 객체가 SnippetSerializer로 실제 model instance를 serialize한 결과와 같은지 확인
         pk = response.data['pk']
         snippet = Snippet.objects.get(pk=pk)
-        self.assertEqual(SnippetSerializer(snippet).data, response.data)
+        self.assertEqual(response.data, SnippetSerializer(snippet).data)
         # 전체 Snippet 객체 개수가 1개인지 확인(orm)
         self.assertEqual(Snippet.objects.count(), 1)
 
